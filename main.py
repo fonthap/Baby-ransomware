@@ -8,7 +8,14 @@ keyPair = RSA.generate(2048)  # 2048 bit
 pubKey = keyPair.publickey()
 encryptor = PKCS1_OAEP.new(pubKey)
 decryptor = PKCS1_OAEP.new(keyPair)
-
+with open('PublicKey_and_Privateket.txt', 'w+') as f:
+        RSApub = format(f"RSA Public key:  (n={hex(pubKey.n)})")
+        s = f.write(RSApub)
+        s = f.write("\n")
+        RSApri = format(f"RSA Private key: (d={hex(keyPair.d)})")
+        s = f.write(RSApri)
+        f.close()
+        
 key = os.urandom(32)  #  32 bytes == 256 bits
 iv = secrets.randbits(128) # 128 bits == 16 bytes 
 
@@ -16,14 +23,7 @@ def Encryption():
     print('{:^50}'.format('Encryption Suscess'))
     print("AES key :",binascii.hexlify(key))
     print("IV :",iv)
-    ciphertext=""
-    with open('PublicKey_And_PrivateKey.txt', 'w+') as f:
-        RSApub = format(f"RSA Public key:  (n={hex(pubKey.n)})")
-        RSApri = format(f"RSA Private key: (d={hex(keyPair.d)})")
-        s = f.write(RSApub)
-        s = f.write("\n")
-        s = f.write(RSApri)
-        f.close()
+    ciphertext=""  
     with open('text.txt', 'rb') as f:
         s = f.read()
         aes = pyaes.AESModeOfOperationCTR(key, pyaes.Counter(iv))
@@ -106,8 +106,16 @@ if __name__ == '__main__':
             print('{:-<50}'.format(' '))
             Encryption()
         elif answer == '2':
-            print('{:-<50}'.format(' '))
-            Decryption()
+            print("Enter your RSA privatekey")
+            tmp= True
+            while(tmp):
+                RSAprivatekey = input()
+                if(RSAprivatekey == hex(keyPair.d)):
+                    print('{:-<50}'.format(' '))
+                    Decryption()
+                    tmp = False
+                else:
+                    print("Try again")
         elif answer == 'x':
             exit()
         else:
